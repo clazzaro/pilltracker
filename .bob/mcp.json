@@ -1,0 +1,41 @@
+{
+  "mcpServers": {
+    "jira": {
+      "command": "node",
+      "args": ["mcp-servers/jira-server/src/index.js"],
+      "env": {
+        "JIRA_DOMAIN": "christopherlazzaro.atlassian.net",
+        "JIRA_EMAIL": "christopherlazzaro@yahoo.com",
+        "JIRA_API_TOKEN": "YOUR_JIRA_API_TOKEN_HERE",
+        "JIRA_PROJECT_KEY": "KAN",
+        "JIRA_ASSIGNEE": "bobdev"
+      },
+      "disabled": false,
+      "alwaysAllow": [
+        "jira_get_assigned_tickets",
+        "jira_get_ticket_details",
+        "jira_update_status",
+        "jira_add_comment"
+      ]
+    },
+    "github": {
+      "command": "node",
+      "args": ["mcp-servers/github-server/src/index.js"],
+      "env": {
+        "GITHUB_TOKEN": "YOUR_GITHUB_TOKEN_HERE",
+        "GITHUB_OWNER": "clazzaro",
+        "GITHUB_REPO": "pilltracker",
+        "GITHUB_BASE_URL": "https://api.github.com",
+        "DEFAULT_BASE_BRANCH": "demo-dev"
+      },
+      "disabled": false,
+      "alwaysAllow": [
+        "github_create_pr",
+        "github_update_pr",
+        "github_list_open_prs",
+        "github_get_pr_reviews",
+        "github_add_pr_comment"
+      ]
+    }
+  }
+}

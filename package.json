@@ -1,0 +1,46 @@
+{
+  "name": "bob-sdlc-demo",
+  "version": "1.0.0",
+  "description": "Bob SDLC Demo - Customer Self-Service Portal",
+  "private": true,
+  "workspaces": [
+    "frontend",
+    "backend",
+    "mcp-servers/jira-server",
+    "mcp-servers/github-server"
+  ],
+  "scripts": {
+    "setup": "npm install && npm run db:init && npm run seed",
+    "dev": "concurrently \"npm run dev:backend\" \"npm run dev:frontend\"",
+    "dev:backend": "cd backend && npm run dev",
+    "dev:frontend": "cd frontend && npm run dev",
+    "dev:jira-mcp": "cd mcp-servers/jira-server && npm run dev",
+    "dev:github-mcp": "cd mcp-servers/github-server && npm run dev",
+    "test": "npm run test:backend && npm run test:frontend",
+    "test:backend": "cd backend && npm test",
+    "test:frontend": "cd frontend && npm test",
+    "db:init": "cd backend && npm run db:init",
+    "seed": "cd backend && npm run seed",
+    "reset": "bash scripts/reset-demo.sh",
+    "lint": "npm run lint:backend && npm run lint:frontend",
+    "lint:backend": "cd backend && npm run lint",
+    "lint:frontend": "cd frontend && npm run lint"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=9.0.0"
+  },
+  "keywords": [
+    "bob",
+    "sdlc",
+    "demo",
+    "jira",
+    "github",
+    "mcp"
+  ],
+  "author": "Bob Demo Team",
+  "license": "MIT"
+}
