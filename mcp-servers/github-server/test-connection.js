@@ -2,8 +2,14 @@
 
 import { Octokit } from '@octokit/rest';
 import dotenv from 'dotenv';
+import path from 'path';
+import { fileURLToPath } from 'url';
 
-dotenv.config();
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+// Load .env from project root (two levels up)
+dotenv.config({ path: path.resolve(__dirname, '../../.env') });
 
 // Initialize GitHub client with Enterprise support
 const octokitConfig = {
