@@ -1,0 +1,560 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pill Tracker Application</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .header {
+            background: white;
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            color: #667eea;
+            margin-bottom: 16px;
+            font-size: 28px;
+        }
+
+        .user-selector {
+            margin-bottom: 16px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 16px;
+            background: white;
+            cursor: pointer;
+            transition: border-color 0.3s;
+        }
+
+        select:hover {
+            border-color: #667eea;
+        }
+
+        select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .time-display {
+            background: #f7fafc;
+            padding: 16px;
+            border-radius: 8px;
+            margin-bottom: 16px;
+        }
+
+        .current-time {
+            font-size: 18px;
+            font-weight: 600;
+            color: #2d3748;
+        }
+
+        .time-controls {
+            margin-top: 12px;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-primary {
+            background: #667eea;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #5568d3;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn-success {
+            background: #48bb78;
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: #38a169;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(72, 187, 120, 0.3);
+        }
+
+        .btn:disabled {
+            background: #cbd5e0;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .prescriptions-card {
+            background: white;
+            border-radius: 12px;
+            padding: 24px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        h2 {
+            color: #2d3748;
+            margin-bottom: 20px;
+            font-size: 22px;
+        }
+
+        .prescription-item {
+            background: #f7fafc;
+            border-left: 4px solid #cbd5e0;
+            padding: 16px;
+            margin-bottom: 16px;
+            border-radius: 8px;
+            transition: all 0.3s;
+        }
+
+        .prescription-item.due {
+            background: #fff5f5;
+            border-left-color: #fc8181;
+            animation: pulse 2s infinite;
+        }
+
+        .prescription-item.taken {
+            background: #f0fff4;
+            border-left-color: #48bb78;
+            opacity: 0.7;
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                box-shadow: 0 0 0 0 rgba(252, 129, 129, 0.4);
+            }
+            50% {
+                box-shadow: 0 0 0 10px rgba(252, 129, 129, 0);
+            }
+        }
+
+        .prescription-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .medication-name {
+            font-size: 18px;
+            font-weight: 700;
+            color: #2d3748;
+        }
+
+        .status-badge {
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .status-badge.due {
+            background: #fc8181;
+            color: white;
+        }
+
+        .status-badge.not-due {
+            background: #e2e8f0;
+            color: #4a5568;
+        }
+
+        .status-badge.taken {
+            background: #48bb78;
+            color: white;
+        }
+
+        .prescription-details {
+            color: #4a5568;
+            line-height: 1.6;
+            margin-bottom: 12px;
+        }
+
+        .prescription-details p {
+            margin-bottom: 4px;
+        }
+
+        .next-dose-info {
+            font-size: 14px;
+            color: #718096;
+            font-style: italic;
+        }
+
+        .alert {
+            background: #fff5f5;
+            border: 2px solid #fc8181;
+            border-radius: 8px;
+            padding: 16px;
+            margin-bottom: 20px;
+            color: #c53030;
+            font-weight: 600;
+        }
+
+        .alert-icon {
+            display: inline-block;
+            margin-right: 8px;
+            font-size: 20px;
+        }
+
+        .no-prescriptions {
+            text-align: center;
+            padding: 40px;
+            color: #718096;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>💊 Pill Tracker</h1>
+            
+            <div class="user-selector">
+                <label for="userSelect">Select User:</label>
+                <select id="userSelect">
+                    <option value="">-- Choose a user --</option>
+                    <option value="0">John Smith</option>
+                    <option value="1">Sarah Johnson</option>
+                    <option value="2">Michael Chen</option>
+                </select>
+            </div>
+
+            <div class="time-display">
+                <div class="current-time" id="currentTime">Current Time: --:--</div>
+                <div class="time-controls">
+                    <button class="btn btn-primary" id="advanceTimeBtn">⏰ Advance Time by 8 Hours</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="prescriptions-card" id="prescriptionsCard" style="display: none;">
+            <div id="alertContainer"></div>
+            <h2>Your Prescriptions</h2>
+            <div id="prescriptionsList"></div>
+        </div>
+    </div>
+
+    <script>
+        // Sample user data with prescriptions
+        const users = [
+            {
+                name: "John Smith",
+                prescriptions: [
+                    {
+                        id: 1,
+                        medication: "Lisinopril 10mg",
+                        dosage: "1 tablet",
+                        frequency: "Once daily",
+                        time: "08:00",
+                        instructions: "Take with food in the morning",
+                        lastTaken: null
+                    },
+                    {
+                        id: 2,
+                        medication: "Metformin 500mg",
+                        dosage: "1 tablet",
+                        frequency: "Twice daily",
+                        time: "08:00,20:00",
+                        instructions: "Take with meals",
+                        lastTaken: null
+                    }
+                ]
+            },
+            {
+                name: "Sarah Johnson",
+                prescriptions: [
+                    {
+                        id: 3,
+                        medication: "Levothyroxine 50mcg",
+                        dosage: "1 tablet",
+                        frequency: "Once daily",
+                        time: "07:00",
+                        instructions: "Take on empty stomach, 30 minutes before breakfast",
+                        lastTaken: null
+                    },
+                    {
+                        id: 4,
+                        medication: "Atorvastatin 20mg",
+                        dosage: "1 tablet",
+                        frequency: "Once daily",
+                        time: "21:00",
+                        instructions: "Take in the evening",
+                        lastTaken: null
+                    },
+                    {
+                        id: 5,
+                        medication: "Vitamin D3 2000 IU",
+                        dosage: "1 capsule",
+                        frequency: "Once daily",
+                        time: "09:00",
+                        instructions: "Take with food",
+                        lastTaken: null
+                    }
+                ]
+            },
+            {
+                name: "Michael Chen",
+                prescriptions: [
+                    {
+                        id: 6,
+                        medication: "Omeprazole 20mg",
+                        dosage: "1 capsule",
+                        frequency: "Once daily",
+                        time: "07:30",
+                        instructions: "Take 30 minutes before breakfast",
+                        lastTaken: null
+                    },
+                    {
+                        id: 7,
+                        medication: "Amlodipine 5mg",
+                        dosage: "1 tablet",
+                        frequency: "Once daily",
+                        time: "08:00",
+                        instructions: "Take at the same time each day",
+                        lastTaken: null
+                    },
+                    {
+                        id: 8,
+                        medication: "Aspirin 81mg",
+                        dosage: "1 tablet",
+                        frequency: "Once daily",
+                        time: "20:00",
+                        instructions: "Take with food in the evening",
+                        lastTaken: null
+                    },
+                    {
+                        id: 9,
+                        medication: "Multivitamin",
+                        dosage: "1 tablet",
+                        frequency: "Once daily",
+                        time: "08:00",
+                        instructions: "Take with breakfast",
+                        lastTaken: null
+                    }
+                ]
+            }
+        ];
+
+        // Current simulated time
+        let currentTime = new Date();
+        let selectedUserIndex = null;
+
+        // Initialize
+        document.getElementById('userSelect').addEventListener('change', handleUserChange);
+        document.getElementById('advanceTimeBtn').addEventListener('click', advanceTime);
+
+        updateTimeDisplay();
+
+        function handleUserChange(event) {
+            const userIndex = event.target.value;
+            if (userIndex === "") {
+                document.getElementById('prescriptionsCard').style.display = 'none';
+                selectedUserIndex = null;
+                return;
+            }
+
+            selectedUserIndex = parseInt(userIndex);
+            document.getElementById('prescriptionsCard').style.display = 'block';
+            renderPrescriptions();
+        }
+
+        function updateTimeDisplay() {
+            const timeString = currentTime.toLocaleString('en-US', {
+                weekday: 'long',
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit'
+            });
+            document.getElementById('currentTime').textContent = `Current Time: ${timeString}`;
+        }
+
+        function advanceTime() {
+            currentTime = new Date(currentTime.getTime() + (8 * 60 * 60 * 1000));
+            updateTimeDisplay();
+            if (selectedUserIndex !== null) {
+                renderPrescriptions();
+            }
+        }
+
+        function isPillDue(prescription) {
+            const times = prescription.time.split(',');
+            const currentHour = currentTime.getHours();
+            const currentMinute = currentTime.getMinutes();
+            const currentTimeInMinutes = currentHour * 60 + currentMinute;
+
+            for (let timeStr of times) {
+                const [hour, minute] = timeStr.split(':').map(Number);
+                const pillTimeInMinutes = hour * 60 + minute;
+                
+                // Check if current time is within 30 minutes of pill time
+                const timeDiff = Math.abs(currentTimeInMinutes - pillTimeInMinutes);
+                
+                if (timeDiff <= 30) {
+                    // Check if already taken today at this time
+                    if (prescription.lastTaken) {
+                        const lastTakenDate = new Date(prescription.lastTaken);
+                        const lastTakenHour = lastTakenDate.getHours();
+                        const lastTakenMinute = lastTakenDate.getMinutes();
+                        const lastTakenTimeInMinutes = lastTakenHour * 60 + lastTakenMinute;
+                        
+                        // If taken within the last hour, consider it taken
+                        if (Math.abs(currentTimeInMinutes - lastTakenTimeInMinutes) < 60 &&
+                            lastTakenDate.toDateString() === currentTime.toDateString()) {
+                            return false;
+                        }
+                    }
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        function getNextDoseTime(prescription) {
+            const times = prescription.time.split(',');
+            const currentHour = currentTime.getHours();
+            const currentMinute = currentTime.getMinutes();
+            const currentTimeInMinutes = currentHour * 60 + currentMinute;
+
+            let nextTime = null;
+            let minDiff = Infinity;
+
+            for (let timeStr of times) {
+                const [hour, minute] = timeStr.split(':').map(Number);
+                const pillTimeInMinutes = hour * 60 + minute;
+                
+                let diff = pillTimeInMinutes - currentTimeInMinutes;
+                if (diff < 0) {
+                    diff += 24 * 60; // Next day
+                }
+
+                if (diff < minDiff) {
+                    minDiff = diff;
+                    nextTime = timeStr;
+                }
+            }
+
+            return nextTime;
+        }
+
+        function markAsTaken(prescriptionId) {
+            const user = users[selectedUserIndex];
+            const prescription = user.prescriptions.find(p => p.id === prescriptionId);
+            if (prescription) {
+                prescription.lastTaken = new Date(currentTime);
+                renderPrescriptions();
+            }
+        }
+
+        function renderPrescriptions() {
+            const user = users[selectedUserIndex];
+            const prescriptionsList = document.getElementById('prescriptionsList');
+            const alertContainer = document.getElementById('alertContainer');
+            
+            if (!user || !user.prescriptions || user.prescriptions.length === 0) {
+                prescriptionsList.innerHTML = '<div class="no-prescriptions">No prescriptions found for this user.</div>';
+                alertContainer.innerHTML = '';
+                return;
+            }
+
+            // Check for due pills
+            const duePills = user.prescriptions.filter(p => isPillDue(p));
+            
+            if (duePills.length > 0) {
+                alertContainer.innerHTML = `
+                    <div class="alert">
+                        <span class="alert-icon">⚠️</span>
+                        You have ${duePills.length} pill${duePills.length > 1 ? 's' : ''} due now!
+                    </div>
+                `;
+            } else {
+                alertContainer.innerHTML = '';
+            }
+
+            prescriptionsList.innerHTML = user.prescriptions.map(prescription => {
+                const isDue = isPillDue(prescription);
+                const isTaken = prescription.lastTaken && 
+                    new Date(prescription.lastTaken).toDateString() === currentTime.toDateString();
+                const nextDose = getNextDoseTime(prescription);
+                
+                let statusClass = 'not-due';
+                let statusText = 'Not Due';
+                
+                if (isTaken) {
+                    statusClass = 'taken';
+                    statusText = 'Taken';
+                } else if (isDue) {
+                    statusClass = 'due';
+                    statusText = 'Due Now';
+                }
+
+                return `
+                    <div class="prescription-item ${statusClass}">
+                        <div class="prescription-header">
+                            <div class="medication-name">${prescription.medication}</div>
+                            <span class="status-badge ${statusClass}">${statusText}</span>
+                        </div>
+                        <div class="prescription-details">
+                            <p><strong>Dosage:</strong> ${prescription.dosage}</p>
+                            <p><strong>Frequency:</strong> ${prescription.frequency}</p>
+                            <p><strong>Scheduled Time(s):</strong> ${prescription.time.split(',').join(', ')}</p>
+                            <p><strong>Instructions:</strong> ${prescription.instructions}</p>
+                            ${prescription.lastTaken ? `<p><strong>Last Taken:</strong> ${new Date(prescription.lastTaken).toLocaleString()}</p>` : ''}
+                        </div>
+                        ${isDue && !isTaken ? `
+                            <button class="btn btn-success" onclick="markAsTaken(${prescription.id})">
+                                ✓ Mark as Taken
+                            </button>
+                        ` : ''}
+                        ${!isDue && !isTaken ? `
+                            <div class="next-dose-info">Next dose at ${nextDose}</div>
+                        ` : ''}
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // Make markAsTaken available globally
+        window.markAsTaken = markAsTaken;
+    </script>
+</body>
+</html>
