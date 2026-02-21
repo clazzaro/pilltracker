@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pill Tracker</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <h1>💊 Pill Tracker</h1>
+        
+        <div class="user-selector">
+            <label for="userSelect">Select User:</label>
+            <select id="userSelect">
+                <option value="0">John Smith</option>
+                <option value="1">Sarah Johnson</option>
+                <option value="2">Michael Brown</option>
+            </select>
+        </div>
+
+        <div class="time-controls">
+            <div class="current-time">
+                <strong>Current Time:</strong> <span id="currentTime"></span>
+            </div>
+            <button id="advanceTimeBtn" class="btn btn-primary">⏰ Advance Time by 8 Hours</button>
+        </div>
+
+        <div id="userInfo" class="user-info">
+            <h2 id="userName"></h2>
+            <div id="prescriptions" class="prescriptions"></div>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
