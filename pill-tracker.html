@@ -1,0 +1,503 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pill Tracker</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            padding: 30px;
+        }
+
+        h1 {
+            color: #667eea;
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+        }
+
+        .controls {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+
+        .user-select {
+            flex: 1;
+            min-width: 200px;
+        }
+
+        select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #667eea;
+            border-radius: 10px;
+            font-size: 16px;
+            background: white;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        select:hover {
+            border-color: #764ba2;
+        }
+
+        .time-display {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .current-time {
+            font-size: 1.5em;
+            color: #667eea;
+            font-weight: bold;
+        }
+
+        .advance-btn {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 10px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-top: 10px;
+        }
+
+        .advance-btn:hover {
+            background: #764ba2;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .user-info {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 15px;
+            margin-bottom: 25px;
+        }
+
+        .user-info h2 {
+            margin-bottom: 10px;
+        }
+
+        .prescriptions {
+            display: grid;
+            gap: 15px;
+        }
+
+        .prescription-card {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s;
+        }
+
+        .prescription-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+        }
+
+        .prescription-card.due {
+            border: 3px solid #ff6b6b;
+            background: #fff5f5;
+        }
+
+        .prescription-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .medication-name {
+            font-size: 1.3em;
+            font-weight: bold;
+            color: #667eea;
+        }
+
+        .dosage {
+            color: #666;
+            font-size: 0.9em;
+        }
+
+        .schedule {
+            display: flex;
+            gap: 10px;
+            margin: 10px 0;
+            flex-wrap: wrap;
+        }
+
+        .schedule-time {
+            background: #e9ecef;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            color: #495057;
+        }
+
+        .status {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .status-badge {
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-weight: bold;
+            font-size: 0.9em;
+        }
+
+        .status-badge.due {
+            background: #ff6b6b;
+            color: white;
+            animation: pulse 2s infinite;
+        }
+
+        .status-badge.taken {
+            background: #51cf66;
+            color: white;
+        }
+
+        .status-badge.not-due {
+            background: #e9ecef;
+            color: #666;
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                opacity: 1;
+            }
+            50% {
+                opacity: 0.7;
+            }
+        }
+
+        .take-pill-btn {
+            background: #51cf66;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 10px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .take-pill-btn:hover {
+            background: #40c057;
+            transform: scale(1.05);
+        }
+
+        .take-pill-btn:disabled {
+            background: #ced4da;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .last-taken {
+            font-size: 0.85em;
+            color: #868e96;
+            margin-top: 5px;
+        }
+
+        .alert {
+            background: #fff3cd;
+            border: 2px solid #ffc107;
+            color: #856404;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            font-weight: bold;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>💊 Pill Tracker</h1>
+        
+        <div class="controls">
+            <div class="user-select">
+                <select id="userSelect" onchange="switchUser()">
+                    <option value="0">John Smith</option>
+                    <option value="1">Mary Johnson</option>
+                    <option value="2">Robert Davis</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="time-display">
+            <div class="current-time" id="currentTime"></div>
+            <button class="advance-btn" onclick="advanceTime()">⏰ Advance Time by 8 Hours</button>
+        </div>
+
+        <div id="alertContainer"></div>
+        <div id="userInfo"></div>
+        <div id="prescriptions"></div>
+    </div>
+
+    <script>
+        // Sample users with prescriptions
+        const users = [
+            {
+                name: "John Smith",
+                age: 65,
+                prescriptions: [
+                    {
+                        medication: "Lisinopril",
+                        dosage: "10mg",
+                        times: ["08:00", "20:00"],
+                        lastTaken: null
+                    },
+                    {
+                        medication: "Metformin",
+                        dosage: "500mg",
+                        times: ["08:00", "12:00", "18:00"],
+                        lastTaken: null
+                    },
+                    {
+                        medication: "Atorvastatin",
+                        dosage: "20mg",
+                        times: ["20:00"],
+                        lastTaken: null
+                    }
+                ]
+            },
+            {
+                name: "Mary Johnson",
+                age: 58,
+                prescriptions: [
+                    {
+                        medication: "Levothyroxine",
+                        dosage: "75mcg",
+                        times: ["06:00"],
+                        lastTaken: null
+                    },
+                    {
+                        medication: "Amlodipine",
+                        dosage: "5mg",
+                        times: ["08:00"],
+                        lastTaken: null
+                    },
+                    {
+                        medication: "Omeprazole",
+                        dosage: "20mg",
+                        times: ["08:00", "20:00"],
+                        lastTaken: null
+                    }
+                ]
+            },
+            {
+                name: "Robert Davis",
+                age: 72,
+                prescriptions: [
+                    {
+                        medication: "Warfarin",
+                        dosage: "5mg",
+                        times: ["18:00"],
+                        lastTaken: null
+                    },
+                    {
+                        medication: "Furosemide",
+                        dosage: "40mg",
+                        times: ["08:00"],
+                        lastTaken: null
+                    },
+                    {
+                        medication: "Aspirin",
+                        dosage: "81mg",
+                        times: ["08:00"],
+                        lastTaken: null
+                    },
+                    {
+                        medication: "Gabapentin",
+                        dosage: "300mg",
+                        times: ["08:00", "14:00", "20:00"],
+                        lastTaken: null
+                    }
+                ]
+            }
+        ];
+
+        let currentUserIndex = 0;
+        let currentTime = new Date();
+
+        function formatTime(date) {
+            return date.toLocaleString('en-US', {
+                weekday: 'long',
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit'
+            });
+        }
+
+        function formatTimeShort(date) {
+            return date.toLocaleTimeString('en-US', {
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+        }
+
+        function isPillDue(prescription) {
+            const currentHour = currentTime.getHours();
+            const currentMinute = currentTime.getMinutes();
+            const currentTimeStr = `${String(currentHour).padStart(2, '0')}:${String(currentMinute).padStart(2, '0')}`;
+
+            for (let scheduleTime of prescription.times) {
+                const [scheduleHour, scheduleMinute] = scheduleTime.split(':').map(Number);
+                
+                // Check if current time is within 30 minutes of scheduled time
+                const scheduledMinutes = scheduleHour * 60 + scheduleMinute;
+                const currentMinutes = currentHour * 60 + currentMinute;
+                const diff = Math.abs(currentMinutes - scheduledMinutes);
+
+                if (diff <= 30) {
+                    // Check if already taken within the last 4 hours
+                    if (prescription.lastTaken) {
+                        const hoursSinceLastTaken = (currentTime - prescription.lastTaken) / (1000 * 60 * 60);
+                        if (hoursSinceLastTaken < 4) {
+                            return false;
+                        }
+                    }
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        function takePill(prescriptionIndex) {
+            users[currentUserIndex].prescriptions[prescriptionIndex].lastTaken = new Date(currentTime);
+            render();
+        }
+
+        function advanceTime() {
+            currentTime = new Date(currentTime.getTime() + (8 * 60 * 60 * 1000));
+            render();
+        }
+
+        function switchUser() {
+            currentUserIndex = parseInt(document.getElementById('userSelect').value);
+            render();
+        }
+
+        function render() {
+            const user = users[currentUserIndex];
+            
+            // Update time display
+            document.getElementById('currentTime').textContent = formatTime(currentTime);
+
+            // Check for due pills
+            const duePills = user.prescriptions.filter(p => isPillDue(p));
+            const alertContainer = document.getElementById('alertContainer');
+            
+            if (duePills.length > 0) {
+                alertContainer.innerHTML = `
+                    <div class="alert">
+                        ⚠️ ${duePills.length} medication${duePills.length > 1 ? 's' : ''} due now!
+                    </div>
+                `;
+            } else {
+                alertContainer.innerHTML = '';
+            }
+
+            // Update user info
+            document.getElementById('userInfo').innerHTML = `
+                <div class="user-info">
+                    <h2>${user.name}</h2>
+                    <p>Age: ${user.age} | Active Prescriptions: ${user.prescriptions.length}</p>
+                </div>
+            `;
+
+            // Update prescriptions
+            const prescriptionsHTML = user.prescriptions.map((prescription, index) => {
+                const isDue = isPillDue(prescription);
+                const isTaken = prescription.lastTaken && 
+                    (currentTime - prescription.lastTaken) / (1000 * 60 * 60) < 4;
+
+                let statusBadge, statusText;
+                if (isTaken) {
+                    statusBadge = 'taken';
+                    statusText = '✓ Taken';
+                } else if (isDue) {
+                    statusBadge = 'due';
+                    statusText = '⚠️ DUE NOW';
+                } else {
+                    statusBadge = 'not-due';
+                    statusText = 'Not Due';
+                }
+
+                return `
+                    <div class="prescription-card ${isDue && !isTaken ? 'due' : ''}">
+                        <div class="prescription-header">
+                            <div>
+                                <div class="medication-name">${prescription.medication}</div>
+                                <div class="dosage">${prescription.dosage}</div>
+                            </div>
+                        </div>
+                        <div class="schedule">
+                            ${prescription.times.map(time => 
+                                `<span class="schedule-time">📅 ${time}</span>`
+                            ).join('')}
+                        </div>
+                        <div class="status">
+                            <span class="status-badge ${statusBadge}">${statusText}</span>
+                            <button 
+                                class="take-pill-btn" 
+                                onclick="takePill(${index})"
+                                ${!isDue || isTaken ? 'disabled' : ''}
+                            >
+                                Mark as Taken
+                            </button>
+                        </div>
+                        ${prescription.lastTaken ? `
+                            <div class="last-taken">
+                                Last taken: ${formatTimeShort(prescription.lastTaken)}
+                            </div>
+                        ` : ''}
+                    </div>
+                `;
+            }).join('');
+
+            document.getElementById('prescriptions').innerHTML = `
+                <div class="prescriptions">
+                    ${prescriptionsHTML}
+                </div>
+            `;
+        }
+
+        // Initial render
+        render();
+    </script>
+</body>
+</html>
